@@ -58,21 +58,21 @@ ggplot(data=full_table, aes(x=Name_of_Campaign, y=budget)) +
 
 ##Comparing the Campaigns to their Impressions
 ggplot(data=full_table, aes(x=Name_of_Campaign, y=impressions_tally)) +
-  geom_bar(stat="identity", width=0.5, col = "purple") + ggtitle("Budget per Campaign")
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Impressions per Campaign")
 
 ##Comparing Budget to Impression
-ggplot(data = full_table) + geom_point(mapping = aes(x = budget, y = impressions_tally), color = 'purple') + ggtitle('Impressions Vs Budget')
+ggplot(data = full_table) + geom_point(mapping = aes(x = budget, y = impressions_tally), fill = 'purple') + ggtitle('Impressions Vs Budget')
 
 ##Comparing the Campaigns to their Clicks
 ggplot(data=full_table, aes(x=Name_of_Campaign, y=clicks_tally)) +
-  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Budget per Campaign")
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Clicks per Campaign")
 
 ## Comparing Impressions to Clicks
 ggplot(data = full_table) + geom_point(mapping = aes(x = clicks_tally, y = impressions_tally), color = 'red') + ggtitle('Impressions Vs Clicks')
 
 ## Comparing the Campaigns to their Conversions
 ggplot(data=full_table, aes(x=Name_of_Campaign, y=conversions_tally)) +
-  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Budget per Campaign")
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Conversions per Campaign")
 
 ## Comparing Clicks to Conversions
 ggplot(data = full_table) + geom_point(mapping = aes(x = clicks_tally, y = conversions_tally), color = 'green') + ggtitle('Conversions Vs Clicks')

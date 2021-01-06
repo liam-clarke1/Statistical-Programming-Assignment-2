@@ -1,0 +1,80 @@
+##Installing Packages
+install.packages("tidyverse")
+library(tibble)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(RColorBrewer)
+myColors <- brewer.pal(6, "Set1")
+names(myColors) <- df2$spray
+
+##Importing Data
+setwd("C:/College/Statistical_Programming/Assignments/dataset")
+advetiser.data <- read_csv("C:/College/Statistical_Programming/Assignments/dataset/advertiser.csv")
+campaigns.data <- read_csv("C:/College/Statistical_Programming/Assignments/dataset/campaigns.csv")
+impressions.data <- read_csv("C:/College/Statistical_Programming/Assignments/dataset/impressions.csv")
+clicks.data <- read_csv("C:/College/Statistical_Programming/Assignments/dataset/clicks.csv")
+conversions.data <- read_csv("C:/College/Statistical_Programming/Assignments/dataset/conversions.csv")
+
+##Creating Tibbles
+tb.advertisers <- tibble(read_csv("C:/College/Statistical_Programming/Assignments/dataset/advertiser.csv"))
+tb.campaigns <- tibble(read_csv("C:/College/Statistical_Programming/Assignments/dataset/campaigns.csv"))
+tb.impressions <- tibble(read_csv("C:/College/Statistical_Programming/Assignments/dataset/impressions.csv"))
+tb.clicks <- tibble(read_csv("C:/College/Statistical_Programming/Assignments/dataset/clicks.csv"))
+tb.conversions <- tibble(read_csv("C:/College/Statistical_Programming/Assignments/dataset/conversions.csv"))
+
+###Renaming columns
+clicks.tally <- tb.clicks %>% group_by(campaign_id) %>% tally()
+colnames(clicks.tally)
+names(clicks.tally)[names(clicks.tally) == "campaign_id"] <- "id"
+names(clicks.tally)[names(clicks.tally) == "n"] <- "clicks_tally"
+
+conversions.tally <- tb.conversions%>% group_by(campaign_id) %>% tally()
+names(conversions.tally)[names(conversions.tally) == "campaign_id"] <- "id"
+names(conversions.tally)[names(conversions.tally) == "n"] <- "conversions_tally"
+view(conversions.tally)
+
+impressions.tally <- tb.impressions%>% group_by(campaign_id) %>% tally()
+names(impressions.tally)[names(impressions.tally) == "campaign_id"] <- "id"
+names(impressions.tally)[names(impressions.tally) == "n"] <- "impressions_tally"
+
+
+names(tb.advertisers)[names(tb.advertisers) == "id"] <- "advertiser_id"
+
+
+##Joining Tables
+clicks_tally.join <- inner_join(tb.campaigns,clicks.tally, by = "id")
+conversions_tally.join <- inner_join(clicks_tally.join,conversions.tally, by = "id")
+impressions_tally.join <- inner_join(conversions_tally.join,impressions.tally, by = "id")
+full_table <- inner_join(impressions_tally.join,tb.advertisers, by = "advertiser_id")
+
+##Renaming Full_Table Columns
+names(full_table)[names(full_table) == "Name of Campaign"] <- "Name_of_Campaign"
+names(full_table)[names(full_table) == "Name of Advertiser"] <- "Name_of_Advertiser"
+view(full_table)
+
+#Graphs
+##Comparing the Campaigns to their Budget
+ggplot(data=full_table, aes(x=Name_of_Campaign, y=budget)) +
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Budget per Campaign")
+
+##Comparing the Campaigns to their Impressions
+ggplot(data=full_table, aes(x=Name_of_Campaign, y=impressions_tally)) +
+  geom_bar(stat="identity", width=0.5, col = "purple") + ggtitle("Budget per Campaign")
+
+##Comparing Budget to Impression
+ggplot(data = full_table) + geom_point(mapping = aes(x = budget, y = impressions_tally), color = 'purple') + ggtitle('Impressions Vs Budget')
+
+##Comparing the Campaigns to their Clicks
+ggplot(data=full_table, aes(x=Name_of_Campaign, y=clicks_tally)) +
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Budget per Campaign")
+
+## Comparing Impressions to Clicks
+ggplot(data = full_table) + geom_point(mapping = aes(x = clicks_tally, y = impressions_tally), color = 'red') + ggtitle('Impressions Vs Clicks')
+
+## Comparing the Campaigns to their Conversions
+ggplot(data=full_table, aes(x=Name_of_Campaign, y=conversions_tally)) +
+  geom_bar(stat="identity", width=0.5, fill = "purple") + ggtitle("Budget per Campaign")
+
+## Comparing Clicks to Conversions
+ggplot(data = full_table) + geom_point(mapping = aes(x = clicks_tally, y = conversions_tally), color = 'green') + ggtitle('Conversions Vs Clicks')
